@@ -11,6 +11,8 @@ class motoboy:
         # ex.: [(10:30, [a, c, e]), (7:00, [b])]
         self.compatibility = []
 
+heapTask = []
+
 def addTask(tasks, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMax = 60):
     inicioTask = randint(inicio, final)
     tamanhoTask = randint(tamanhoMin, tamanhoMax)
@@ -33,14 +35,17 @@ def intervalPartitioning (motoboys, tasks):
             hp.heappush(motoboys.compatibility, (task[1], [task]))
 
 def menu(request):
+    global heapTask 
     motoboys = motoboy()
-    heapTask = []
 
     if request.GET.__contains__('qtd'):
         try:
-            motoboys = motoboy()
-            val = int(request.GET['qtd'])
-            heapTask = randomizeTasks([], val)
+            qtd = int(request.GET['qtd'])
+            #  inicio = int(request.GET['inicio'])
+            #  final = int(request.GET['final'])
+            #  tamanhoMin = int(request.GET['tamanhoMin'])
+            #  tamanhoMax = int(request.GET['tamanhoMax'])
+            heapTask = randomizeTasks([], qtd)
             intervalPartitioning(motoboys, heapTask)
         except:
             ...
@@ -48,4 +53,4 @@ def menu(request):
         heapTask = addTask(heapTask);
         intervalPartitioning(motoboys, heapTask)
     
-    return render(request, 'menu.html', {'motoboys': motoboys.compatibility, 'qtd_motoboys': motoboys.qtd})
+    return render(request, 'menu.html', {'motoboys': motoboys.compatibility, 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})

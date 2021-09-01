@@ -19,6 +19,10 @@
             <nav class="d-flex justify-content-around">
                 <form class="d-flex">
                         <input class="form-control me-2" type="text" placeholder="Pedidos (ex: 10)" aria-label="Search" name="qtd">
+                        <input class="form-control me-2" type="text" placeholder="Horário de abertura (ex: 15)" aria-label="Search" name="inicio">
+                        <input class="form-control me-2" type="text" placeholder="Horário de fechamento (ex: 19)" aria-label="Search" name="final">
+                        <input class="form-control me-2" type="text" placeholder="Tamanho mínimo de uma entrega (ex: 10)" aria-label="Search" name="tamanhoMin">
+                        <input class="form-control me-2" type="text" placeholder="Tamanho máximo de uma entrega (ex: 60)" aria-label="Search" name="tamanhoMax">
                         <button class="btn btn-outline-success" type="submit">Adicionar</button>
                 </form>
 		<form>
@@ -28,16 +32,12 @@
         </div>
         <div class = "d-flex justify-content-center">
             {% if motoboys %}
-                {{motoboys}}
                 {{qtd_motoboys}}
+		{{qtd_tasks}}
+                {{motoboys}}
             {% endif %}
         </div>
     </div>
-    
-
-    
-
-
     {% endblock %}
 
     <script
