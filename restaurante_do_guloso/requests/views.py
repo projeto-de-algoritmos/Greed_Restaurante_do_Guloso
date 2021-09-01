@@ -11,29 +11,16 @@ class motoboy:
         # ex.: [(10:30, [a, c, e]), (7:00, [b])]
         self.compatibility = []
 
-"""Randomiza tarefas
-Args:
-    qtd (int)        : Quantidade de tarefas
-    inicio (int)     : Inicio do período de entregas
-    final (int)      : Final do período de entregas
-    tamanhoMin (int) : Tamanho min da entrega
-    tamanhoMax (int) : Tamanhp max da entrega
-
-Returns:
-    list: lista de task organizadas
-"""
-def randomizeTasks(qtd: 5, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMax = 60):
-    tasks = []
-    for _ in range(qtd):
-        inicioTask = randint(inicio, final)
-        tamanhoTask = randint(tamanhoMin, tamanhoMax)
-        hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
-    return tasks
-
 def addTask(tasks, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMax = 60):
     inicioTask = randint(inicio, final)
     tamanhoTask = randint(tamanhoMin, tamanhoMax)
     hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
+    return tasks
+
+def randomizeTasks(tasks, qtd = 5):
+    for _ in range(qtd):
+            tasks = addTask(tasks)
+    return tasks
 
 def intervalPartitioning (motoboys, tasks):
     for task in tasks:
@@ -47,12 +34,18 @@ def intervalPartitioning (motoboys, tasks):
 
 def menu(request):
     motoboys = motoboy()
-    # intervalPartitioning(motoboys, randomizeTasks(5))
-    # return HttpResponse(f"{motoboys.qtd} motoboys: {motoboys.compatibility}")
+    heapTask = []
 
-    if request.GET:
-        val1 = int(request.GET['qtd1'])
-        heapTask = randomizeTasks(val1)
+    if request.GET.__contains__('qtd'):
+        try:
+            motoboys = motoboy()
+            val = int(request.GET['qtd'])
+            heapTask = randomizeTasks([], val)
+            intervalPartitioning(motoboys, heapTask)
+        except:
+            ...
+    elif request.GET.__contains__('plus'):
+        heapTask = addTask(heapTask);
         intervalPartitioning(motoboys, heapTask)
     
     return render(request, 'menu.html', {'motoboys': motoboys.compatibility, 'qtd_motoboys': motoboys.qtd})
