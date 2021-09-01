@@ -30,6 +30,11 @@ def randomizeTasks(qtd: 5, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMa
         hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
     return tasks
 
+def addTask(tasks, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMax = 60):
+    inicioTask = randint(inicio, final)
+    tamanhoTask = randint(tamanhoMin, tamanhoMax)
+    hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
+
 def intervalPartitioning (motoboys, tasks):
     for task in tasks:
         if motoboys.compatibility and motoboys.compatibility[0][0] <= task[0]:
@@ -42,5 +47,12 @@ def intervalPartitioning (motoboys, tasks):
 
 def menu(request):
     motoboys = motoboy()
-    intervalPartitioning(motoboys, randomizeTasks(5))
-    return HttpResponse(f"{motoboys.qtd} motoboys: {motoboys.compatibility}")
+    # intervalPartitioning(motoboys, randomizeTasks(5))
+    # return HttpResponse(f"{motoboys.qtd} motoboys: {motoboys.compatibility}")
+
+    if request.GET:
+        val1 = int(request.GET['qtd1'])
+        heapTask = randomizeTasks(val1)
+        intervalPartitioning(motoboys, heapTask)
+    
+    return render(request, 'menu.html', {'motoboys': motoboys.compatibility, 'qtd_motoboys': motoboys.qtd})
