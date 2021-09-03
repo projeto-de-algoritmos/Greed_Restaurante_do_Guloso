@@ -14,34 +14,55 @@
 <body>
     {% block content %}
     <div class="offset-1 col-10 list-div">
-        <h1 class= "d-flex justify-content-center">Restaurante do Guloso</h1>
-        <div class="">
-            <nav class="d-flex justify-content-around">
-                <form class="d-flex">
-                        <input class="form-control me-2" type="text" placeholder="Pedidos (ex: 10)" aria-label="Search" name="qtd">
-                        <input class="form-control me-2" type="text" placeholder="Horário de abertura (ex: 15)" aria-label="Search" name="inicio">
-                        <input class="form-control me-2" type="text" placeholder="Horário de fechamento (ex: 19)" aria-label="Search" name="final">
-                        <input class="form-control me-2" type="text" placeholder="Tamanho mínimo de uma entrega (ex: 10)" aria-label="Search" name="tamanhoMin">
-                        <input class="form-control me-2" type="text" placeholder="Tamanho máximo de uma entrega (ex: 60)" aria-label="Search" name="tamanhoMax">
-                        <button class="btn btn-outline-success" type="submit">Adicionar</button>
+        <h1 class="d-flex justify-content-center">Restaurante do Guloso</h1>
+        <div>
+	    <nav>
+                <form>
+		    <div class="form-group">
+			<label>Quantidade Pedidos</label>
+			<input class="form-control me-2" type="number" placeholder="(ex: 10)" aria-label="Search" name="qtd" required>
+		    </div>
+		    <div class="form-group">
+			<label>Horário de Abertura</label>
+			<input class="form-control me-2" type="number" placeholder="(ex: 15)" aria-label="Search" name="inicio">
+			<small class="form-text text-muted">Informe em horas.</small>
+		    </div>
+		    <div class="form-group">
+			<label>Horário de Fechamento</label>
+			<input class="form-control me-2" type="number" placeholder="(ex: 19)" aria-label="Search" name="final">
+			<small class="form-text text-muted">Informe em horas.</small>
+		    </div>
+		    <div class="form-group">
+			<label>Tempo Mínimo para uma Entrega</label>
+			<input class="form-control me-2" type="number" placeholder="(ex: 10)" aria-label="Search" name="tamanhoMin">
+			<small class="form-text text-muted">Informe em horas.</small>
+		    </div>
+		    <div class="form-group">
+			<label>Tempo Máximo para uma Entrega</label>
+			<input class="form-control me-2" type="number" placeholder="(ex: 60)" aria-label="Search" name="tamanhoMax">
+			<small class="form-text text-muted">Informe em horas.</small>
+		    </div>
+		    {% for message in messages %}
+			<div {% if message.tags %} class="alert alert-danger"{% endif %}>{{ message }}</div>
+		    {% endfor %}
+		    <button class="btn btn-outline-success" type="submit">Adicionar</button>
                 </form>
 		<form>
-			<button type="submit" class="btn btn-success" value="True" name="plus">Adicionar um Pedido</button>
+		    <button type="submit" class="btn btn-success" value="True" name="plus">Adicionar um Pedido</button>
 		</form>
-            </nav>
+	    </nav>
         </div>
+	<h2 class="d-flex justify-content-center">Para {{qtd_tasks}} pedidos foram necessários {{qtd_motoboys}} motoboys.</h2>
         <div class = "d-flex justify-content-center">
             {% if motoboys %}
-                {{qtd_motoboys}}
-		        {{qtd_tasks}}
                 <table border = "1" cellpadding = "5" cellspacing = "5">
                     <td>Motoboy</td>
                     <td>Horário</td>
                     {% for motoboy, shifters in motoboys.items %}
                         <tr>
-                            <td>{{motoboy}}</td>
+			    <td class="count"></td>
                             <td>{% for shift in shifters %}
-                                    {{shift}}
+				    [{{shift.0}} - {{shift.1}}]
                                 {% endfor %}
                             </td>
                         </tr>

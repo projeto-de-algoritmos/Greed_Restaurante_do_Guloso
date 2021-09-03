@@ -1,27 +1,42 @@
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib import messages
 
 from random import randint
 import heapq as hp
+import time
 
 class motoboy:
-    def __init__(self):
+    def __init__(self, inicio = 0, final = 86400, tamanhoMin = 600, tamanhoMax = 3600):
+        self.inicio = inicio
+        self.final = final
+        self.tamanhoMin = tamanhoMin
+        self.tamanhoMax = tamanhoMax
         self.qtd = 0
         # ex.: [(10:30, [a, c, e]), (7:00, [b])]
         self.compatibility = []
 
+    def __convert(self, task):
+        return (time.strftime('%H:%M', time.gmtime(task[0])), time.strftime('%H:%M', time.gmtime(task[1])))
+
+    def convertTime(self):
+        ret = {}
+        for i in range(self.qtd):
+            ret[i] = map(self.__convert, self.compatibility[i][1])
+        return ret
+
 heapTask = []
 
-def addTask(tasks, inicio = 600, final = 900, tamanhoMin = 10, tamanhoMax = 60):
-    inicioTask = randint(inicio, final)
-    tamanhoTask = randint(tamanhoMin, tamanhoMax)
+def addTask(motoboys, tasks):
+    inicioTask = randint(motoboys.inicio, motoboys.final)
+    tamanhoTask = randint(motoboys.tamanhoMin, motoboys.tamanhoMax)
     hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
     return tasks
 
-def randomizeTasks(tasks, qtd = 5):
+def randomizeTasks(motoboys, tasks, qtd):
     for _ in range(qtd):
-            tasks = addTask(tasks)
+        tasks = addTask(motoboys, tasks)
     return tasks
 
 def intervalPartitioning (motoboys, tasks):
@@ -34,25 +49,32 @@ def intervalPartitioning (motoboys, tasks):
             motoboys.qtd += 1
             hp.heappush(motoboys.compatibility, (task[1], [task]))
 
+def validateNumber (number):
+    if number <= 0:
+        raise Exception
+    return number
+
 def menu(request):
     global heapTask
     motoboys = motoboy()
 
-    if request.GET.__contains__('qtd'):
+    if request.GET.__contains__('plus'):
+        heapTask = addTask(motoboys, heapTask)
+        intervalPartitioning(motoboys, heapTask)
+    elif request.GET.__contains__('qtd'):
         try:
-            qtd = int(request.GET['qtd'])
-            #  inicio = int(request.GET['inicio'])
-            #  final = int(request.GET['final'])
-            #  tamanhoMin = int(request.GET['tamanhoMin'])
-            #  tamanhoMax = int(request.GET['tamanhoMax'])
-            heapTask = randomizeTasks([], qtd)
+            qtd = validateNumber(int(request.GET['qtd']))
+            motoboys = motoboy()
+            if request.GET['inicio'] != "":
+                motoboys.inicio = validateNumber(int(request.GET['inicio']) * 3600)
+            if request.GET['final'] != "":
+                motoboys.final = validateNumber(int(request.GET['final']) * 3600)
+            if request.GET['tamanhoMin'] != "":
+                motoboys.tamanhoMin = validateNumber(int(request.GET['tamanhoMin']) * 60)
+            if request.GET['tamanhoMax'] != "":
+                motoboys.tamanhoMax = validateNumber(int(request.GET['tamanhoMax']) * 60)
+            heapTask = randomizeTasks(motoboys, [], qtd)
             intervalPartitioning(motoboys, heapTask)
         except:
-            ...
-    elif request.GET.__contains__('plus'):
-        heapTask = addTask(heapTask)
-        intervalPartitioning(motoboys, heapTask)
-    
-    
-
-    return render(request, 'menu.html', {'motoboys': dict(motoboys.compatibility), 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})
+            messages.error(request, 'Digite um valor maior ou igual a 0')
+    return render(request, 'menu.html', {'motoboys': dict(motoboys.convertTime()), 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})
