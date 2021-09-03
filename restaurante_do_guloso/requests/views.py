@@ -35,7 +35,7 @@ def intervalPartitioning (motoboys, tasks):
             hp.heappush(motoboys.compatibility, (task[1], [task]))
 
 def menu(request):
-    global heapTask 
+    global heapTask
     motoboys = motoboy()
 
     if request.GET.__contains__('qtd'):
@@ -50,7 +50,9 @@ def menu(request):
         except:
             ...
     elif request.GET.__contains__('plus'):
-        heapTask = addTask(heapTask);
+        heapTask = addTask(heapTask)
         intervalPartitioning(motoboys, heapTask)
     
-    return render(request, 'menu.html', {'motoboys': motoboys.compatibility, 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})
+    
+
+    return render(request, 'menu.html', {'motoboys': dict(motoboys.compatibility), 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})

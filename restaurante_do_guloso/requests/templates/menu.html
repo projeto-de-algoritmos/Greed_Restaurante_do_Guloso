@@ -33,8 +33,20 @@
         <div class = "d-flex justify-content-center">
             {% if motoboys %}
                 {{qtd_motoboys}}
-		{{qtd_tasks}}
-                {{motoboys}}
+		        {{qtd_tasks}}
+                <table border = "1" cellpadding = "5" cellspacing = "5">
+                    <td>Motoboy</td>
+                    <td>Horário</td>
+                    {% for motoboy, shifters in motoboys.items %}
+                        <tr>
+                            <td>{{motoboy}}</td>
+                            <td>{% for shift in shifters %}
+                                    {{shift}}
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             {% endif %}
         </div>
     </div>
