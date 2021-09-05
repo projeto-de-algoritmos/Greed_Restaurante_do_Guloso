@@ -32,15 +32,14 @@ def addTask(motoboys, tasks):
     inicioTask = randint(motoboys.inicio, motoboys.final)
     tamanhoTask = randint(motoboys.tamanhoMin, motoboys.tamanhoMax)
     hp.heappush(tasks, (inicioTask, inicioTask + tamanhoTask))
-    return tasks
 
 def randomizeTasks(motoboys, tasks, qtd):
     for _ in range(qtd):
-        tasks = addTask(motoboys, tasks)
-    return tasks
+        addTask(motoboys, tasks)
 
 def intervalPartitioning (motoboys, tasks):
-    for task in tasks:
+    while tasks:
+        task = hp.heappop(tasks)
         if motoboys.compatibility and motoboys.compatibility[0][0] <= task[0]:
             motoboys.compatibility[0][1].append(task)
             motoboys.compatibility[0] = (task[1], motoboys.compatibility[0][1])
@@ -59,8 +58,9 @@ def menu(request):
     motoboys = motoboy()
 
     if request.GET.__contains__('plus'):
-        heapTask = addTask(motoboys, heapTask)
-        intervalPartitioning(motoboys, heapTask)
+        addTask(motoboys, heapTask)
+        tasks = heapTask.copy()
+        intervalPartitioning(motoboys, tasks)
     elif request.GET.__contains__('qtd'):
         try:
             qtd = validateNumber(int(request.GET['qtd']))
@@ -73,8 +73,10 @@ def menu(request):
                 motoboys.tamanhoMin = validateNumber(int(request.GET['tamanhoMin']) * 60)
             if request.GET['tamanhoMax'] != "":
                 motoboys.tamanhoMax = validateNumber(int(request.GET['tamanhoMax']) * 60)
-            heapTask = randomizeTasks(motoboys, [], qtd)
-            intervalPartitioning(motoboys, heapTask)
+            heapTask = []
+            randomizeTasks(motoboys, heapTask, qtd)
+            tasks = heapTask.copy()
+            intervalPartitioning(motoboys, tasks)
         except:
             messages.error(request, 'Digite um valor maior ou igual a 0')
     return render(request, 'menu.html', {'motoboys': dict(motoboys.convertTime()), 'qtd_motoboys': motoboys.qtd, 'qtd_tasks': len(heapTask)})
