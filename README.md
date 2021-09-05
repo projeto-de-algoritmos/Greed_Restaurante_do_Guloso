@@ -37,5 +37,6 @@ $ pip install django
 # Abra o servidor
 $ python restaurante_do_guloso/manage.py runserver
 
-# Acesse o localhost no seu navegador
+# Acesse o localhost na porta 8000 no seu navegador
+localhost:8000
 ```
